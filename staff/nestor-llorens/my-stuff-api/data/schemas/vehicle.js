@@ -17,7 +17,9 @@ const vehicleSchema = new Schema({
 
     electric: { type: Boolean, required: true, default: false},
     
-    owner: { type: ObjectId, ref: 'User'}
+    owner: { type: ObjectId, ref: 'User'},
+
+    plate: { type: String, required: true }
 
 })
 
