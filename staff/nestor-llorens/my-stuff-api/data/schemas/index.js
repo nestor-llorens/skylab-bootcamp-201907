@@ -1,4 +1,5 @@
 module.exports = {
     user: require('./user'),
-    vehicle: require('./vehicle')
+    vehicle: require('./vehicle'),
+    card: require('./card')
 }

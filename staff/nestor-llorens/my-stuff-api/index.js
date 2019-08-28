@@ -11,6 +11,7 @@ mongoose.connect(DB_URL, { useNewUrlParser: true })
 .then(() => {
 
     const app = express()
+    
     app.use(express.json())
 
     app.use('/api', routes)
