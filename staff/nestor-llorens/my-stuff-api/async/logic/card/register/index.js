@@ -3,21 +3,25 @@ const { User, Card } = require('../../../data')
 
 function registerCard(id, number, expiry) {
     
-    return User.findById(id)
-        .then(user => {
+    return (async () => {
+    const user = await User.findById(id)
+   
+    if (!user) throw new Error(`user with id ${id} does not exists`)
 
-            
-            if (!user) throw new Error(`user with id ${id} does not exists`)
+    const existing = user.cards.some(({ number: _number }) => _number === number)
 
-            const existing = user.cards.some(({ number: _number }) => _number === number)
+    if (existing) throw new Error(`user with id ${id} already has card number ${number}`)
 
-            if (existing) throw new Error(`user with id ${id} already has card number ${number}`)
+    const newCard = new Card({ number, expiry })
+    
+    const cardId = newCard.id
+    user.cards.push(newCard)
 
-            user.cards.push(new Card({ number, expiry }))
+    await user.save()
 
-            return user.save()
-        })
-        .then(() => { })
+    return cardId
+
+    })()
 }
 
 module.exports = registerCard

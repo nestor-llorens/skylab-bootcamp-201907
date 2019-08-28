@@ -6,18 +6,20 @@ function unregisterCard(id, number) {
     validate.string(id, 'id')
     // validate.string(number, 'number')
 
-    return User.findOne({ _id: id })
-        .then(user => {
-            if (!user) throw Error('There is no user with this id')
-            else {
-                const cardIndex = user.cards.findIndex(card => card.number === number)
-                if (cardIndex.length === 0) throw Error('This card does not exist')
-                else {
-                    user.cards.splice(cardIndex)
-                    user.save()
-                }
-            }
-        })
+    return (async () => {
+    const user = await User.findById(id)
+    if (!user) throw Error('There is no user with this id')
+    else {
+        
+        const cardIndex = user.cards.findIndex(card => card.number === number)
+
+        if (cardIndex === -1) throw Error('This card does not exist')
+        else {
+            user.cards.splice(cardIndex)
+            await user.save()
+        }
+    }
+    })()
 }
 
 module.exports = unregisterCard

@@ -9,12 +9,13 @@ function registerUser (name, surname, email, password) {
     validate.email(email, 'email')
     validate.string(password, 'password')
 
-    return User.findOne({ email })
-        .then(user => {
-            if (user) throw new Error(`user with e-mail ${email} already exists`)
-            return User.create({ name, surname, email, password })
-        })
-        .then(() => { })
+    return (async () => {
+        
+        const user = await User.findOne({ email })
+        if (user) throw new Error(`user with e-mail ${email} already exists`)
+        await User.create({ name, surname, email, password })
+
+    })()
 }
 
 module.exports = registerUser

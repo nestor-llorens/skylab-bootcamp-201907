@@ -8,7 +8,7 @@ describe('logic - register card', () => {
 
     let name, surname, email, password, id, _number, expiry
 
-    beforeEach(() => {
+    beforeEach(async() => {
         name = `name-${Math.random()}`
         surname = `surname-${Math.random()}`
         email = `email-${Math.random()}@domain.com`
@@ -18,25 +18,24 @@ describe('logic - register card', () => {
 
         expiry = new Date
 
-        return User.deleteMany()
-            .then(() => User.create({ name, surname, email, password }))
-            .then(user => id = user.id)
+        await User.deleteMany()
+        let user = await User.create({ name, surname, email, password })
+        id = user.id
     })
 
-    it('should succeed on correct data', () =>
-         logic.registerCard(id, _number, expiry)
-            .then(_id => cardId = _id)
-            .then(() => User.findById(id))
-            .then(user => {
-                expect(user).to.exist
+    it('should succeed on correct data', async() => {
+        await logic.registerCard(id, _number, expiry)
 
-                expect(user.cards).to.have.lengthOf(1)
+        const user = await User.findById(id)
+    
+        expect(user).to.exist
 
-                expect(user.cards[0]).to.exist
-                expect(user.cards[0].number).to.equal(_number)
-                expect(user.cards[0].expiry).to.deep.equal(expiry)           
-            })
-    )
+        expect(user.cards).to.have.lengthOf(1)
+
+        expect(user.cards[0]).to.exist
+        expect(user.cards[0].number).to.equal(_number)
+        expect(user.cards[0].expiry).to.deep.equal(expiry)           
+        })
 
     after(() => mongoose.disconnect())
 })

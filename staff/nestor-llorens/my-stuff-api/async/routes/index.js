@@ -2,6 +2,7 @@ const { Router } = require('express')
 const tokenMiddleware = require('../helpers/token-middleware')
 const { registerUser, authenticateUser, retrieveUser, updateUser, unregisterUser } = require('./user')
 const { registerVehicle } = require('./vehicle')
+const { registerCard } = require('./card')
 
 
 const router = Router()
@@ -19,5 +20,11 @@ router.delete('/users/:id', tokenMiddleware, unregisterUser)
 //
 
 router.post('/vehicles', registerVehicle)
+
+//
+
+router.post('/cards', registerCard)
+
+
 
 module.exports = router

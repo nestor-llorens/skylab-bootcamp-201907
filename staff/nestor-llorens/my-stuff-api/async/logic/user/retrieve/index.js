@@ -5,14 +5,14 @@ function retrieveUser (id) {
 
     validate.string(id, 'id')
 
-    return User.findOne({ _id: id }, { _id: 0, password: 0 }).lean()
-        .then(user => {
-            if (!user) throw new Error(`user with id ${id} not found`)
+    return (async () => {
+    const user = await User.findOne({ _id: id }, { _id: 0, password: 0 }).lean()
+    if (!user) throw new Error(`user with id ${id} not found`)
 
-            user.id = id
+    user.id = id
 
-            return user
-        })
+    return user
+    })()
 }
 
 module.exports = retrieveUser

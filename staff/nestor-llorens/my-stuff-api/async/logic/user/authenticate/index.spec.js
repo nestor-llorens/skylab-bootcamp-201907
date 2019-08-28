@@ -12,32 +12,43 @@ describe('logic - authenticate user', () => {
     email = `email-${Math.random()}@domain.com`
     password = `password-${Math.random()}`
 
-    before(() =>
-        mongoose.connect('mongodb://localhost/my-api-test', { useNewUrlParser: true })
+    before(async() => {
+        await mongoose.connect('mongodb://localhost/my-api-test', { useNewUrlParser: true })
             .then(() => User.deleteMany())
-            .then(() => User.create({ name, surname, email, password }))
-            .then(user => { 
-                id = user.id})
-    )
 
-    it('should succeed on correct data', () =>
-        logic.authenticateUser(email, password)
-            .then(_id => {
-                expect(_id).to.exist
-                expect(_id).to.be.a('string')
-                expect(_id).to.equal(id)
+
+        const user = await User.create({ name, surname, email, password })
+        id = user.id
             })
-    )
 
-    it('should fail on wrong email', () =>
-        logic.authenticateUser('wrongEmail@ddd.com', password)
-            .catch(error => expect(error.message).to.equal('user with e-mail wrongEmail@ddd.com does not exist'))
-    )
+    it('should succeed on correct data', async() => {
+        const _id = await logic.authenticateUser(email, password)
+        
+        expect(_id).to.exist
+        expect(_id).to.be.a('string')
+        expect(_id).to.equal(id)
+    })
+        
 
-    it('should fail on wrong password', () =>
-        logic.authenticateUser(email, 'wrongPassword')
-            .catch(error => expect(error.message).to.equal('wrong credentials'))
-    )
+    it('should fail on wrong email', async() => {
+        
+        try {
+            await logic.authenticateUser('wrongEmail@ddd.com', password)
+        }
+        catch (error) {
+            expect(error.message).to.equal('user with e-mail wrongEmail@ddd.com does not exist')
+        }
+        
+    })
+
+    it('should fail on wrong password', async() => {
+        try {
+            await logic.authenticateUser(email, 'wrongPassword')
+        }
+        catch (error) {
+            expect(error.message).to.equal('wrong credentials')
+        }
+    })
 
     after(() => mongoose.disconnect())
 })

@@ -7,17 +7,15 @@ function authenticateUser (email, password) {
     validate.email(email, 'email')
     validate.string(password, 'password')
 
-    debugger
-
-    return User.findOne({ email })
-        .then(user => {
-            
-            if (!user) throw new Error(`user with e-mail ${email} does not exist`)
-
-            if (user.password !== password) throw new Error('wrong credentials')    
-
-            return user.id
-        })
+    return (async () => {
+        const user = await User.findOne({ email })
+    
+        if (!user) throw new Error(`user with e-mail ${email} does not exist`)
+    
+        if (user.password !== password) throw new Error('wrong credentials')
+    
+        return user.id
+    })()
 }
 
 module.exports = authenticateUser
